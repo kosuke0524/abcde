@@ -90,9 +90,9 @@
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(5, minmax(76px, 1fr));
+      grid-template-columns: repeat(6, minmax(70px, 1fr));
       gap: 8px;
-      min-width: min(570px, 100%);
+      min-width: min(660px, 100%);
     }
 
     .stat,
@@ -473,6 +473,51 @@
       gap: 8px;
     }
 
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .course-grid button {
+      min-height: 50px;
+      padding: 8px 10px;
+      color: var(--text);
+      background: #2d3842;
+      border: 1px solid var(--line);
+      font-size: .9rem;
+      line-height: 1.15;
+    }
+
+    .course-grid button:hover,
+    .course-grid button:focus-visible {
+      border-color: var(--sun);
+      background: #374653;
+      outline: 0;
+    }
+
+    .player-select {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .player-select button {
+      min-height: 38px;
+      padding: 0 8px;
+      color: var(--text);
+      background: #2d3842;
+      border: 1px solid var(--line);
+      font-size: .86rem;
+    }
+
+    .player-select button.active {
+      color: #101417;
+      background: var(--sun);
+      border-color: var(--sun);
+    }
+
     .secondary {
       color: var(--text);
       background: var(--panel-2);
@@ -481,16 +526,59 @@
 
     .choice-row {
       display: grid;
-      gap: 8px;
-      margin-top: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
     }
 
     .choice-row button {
       width: 100%;
+      min-height: 92px;
       color: var(--text);
-      background: #2d3842;
+      background: linear-gradient(160deg, #2d3842, #202830);
       border: 1px solid var(--line);
       text-align: left;
+      padding: 12px;
+      display: grid;
+      gap: 7px;
+      align-content: start;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .choice-row button:hover,
+    .choice-row button:focus-visible {
+      border-color: var(--sea);
+      background: linear-gradient(160deg, #34475a, #24313b);
+      transform: translateY(-2px);
+      outline: 0;
+    }
+
+    .choice-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--sea);
+      color: #101417;
+      font-size: .82rem;
+      font-weight: 950;
+    }
+
+    .choice-title {
+      display: block;
+      font-size: 1rem;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .choice-detail {
+      display: block;
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.35;
+      font-weight: 650;
     }
 
     .timeline {
@@ -584,6 +672,7 @@
       <div class="topbar">
         <h1>Life Path Board</h1>
         <div class="stats" aria-live="polite">
+          <div class="stat"><span>Player</span><strong id="playerName">P1</strong></div>
           <div class="stat"><span>Age</span><strong id="age">18</strong></div>
           <div class="stat"><span>Money</span><strong id="money">¥0</strong></div>
           <div class="stat"><span>Debt</span><strong id="debt">¥0</strong></div>
@@ -619,9 +708,21 @@
         <div class="spinner">
           <div class="wheel" id="wheel"><strong id="spinValue">-</strong></div>
           <div class="controls">
-            <p id="statusText">最初の分岐を選んでください。</p>
-            <button class="secondary" id="workButton" type="button">仕事コース</button>
-            <button class="secondary" id="collegeButton" type="button">大学コース</button>
+            <p id="statusText">人数を選んでから、各プレイヤーのコースを選んでください。</p>
+            <div class="player-select" id="playerSelect" aria-label="プレイヤー人数">
+              <button class="active" type="button" data-players="1">1人</button>
+              <button type="button" data-players="2">2人</button>
+              <button type="button" data-players="3">3人</button>
+              <button type="button" data-players="4">4人</button>
+            </div>
+            <div class="course-grid">
+              <button type="button" data-course="work">仕事<br>安定収入</button>
+              <button type="button" data-course="college">大学<br>高スキル</button>
+              <button type="button" data-course="business">起業<br>高リスク</button>
+              <button type="button" data-course="event">イベント<br>幸せ重視</button>
+              <button type="button" data-course="family">家族<br>絆重視</button>
+              <button type="button" data-course="investor">投資<br>資産重視</button>
+            </div>
           </div>
         </div>
       </section>
@@ -629,6 +730,7 @@
       <section class="panel">
         <h2>Profile</h2>
         <ul>
+          <li>コース: <strong id="course">未定</strong></li>
           <li>職業: <strong id="career">未定</strong></li>
           <li>年収: <strong id="salary">¥0</strong></li>
           <li>スキル: <strong id="skill">0</strong></li>
@@ -791,7 +893,145 @@
         { name: "金融アドバイザー", salary: 590000, skill: 3 },
         { name: "都市計画プランナー", salary: 500000, skill: 3 },
         { name: "AI研究者", salary: 680000, skill: 5 }
+      ],
+      business: [
+        { name: "スタートアップ創業者", salary: 420000, skill: 4 },
+        { name: "飲食店オーナー", salary: 380000, skill: 3 },
+        { name: "ECショップ運営者", salary: 400000, skill: 3 },
+        { name: "不動産事業家", salary: 470000, skill: 3 },
+        { name: "フリーランス代表", salary: 360000, skill: 4 },
+        { name: "地域商社オーナー", salary: 410000, skill: 3 }
+      ],
+      event: [
+        { name: "イベントプランナー", salary: 360000, skill: 3 },
+        { name: "ツアーガイド", salary: 320000, skill: 3 },
+        { name: "舞台スタッフ", salary: 330000, skill: 3 },
+        { name: "フェス運営者", salary: 350000, skill: 3 },
+        { name: "コミュニティマネージャー", salary: 370000, skill: 3 },
+        { name: "旅ライター", salary: 310000, skill: 3 }
+      ],
+      family: [
+        { name: "福祉スタッフ", salary: 350000, skill: 3 },
+        { name: "保育士", salary: 330000, skill: 3 },
+        { name: "地域相談員", salary: 360000, skill: 3 },
+        { name: "在宅ワーカー", salary: 340000, skill: 2 },
+        { name: "家業サポーター", salary: 320000, skill: 2 },
+        { name: "ケアマネージャー", salary: 390000, skill: 3 }
+      ],
+      investor: [
+        { name: "個人投資家", salary: 300000, skill: 4 },
+        { name: "資産運用アドバイザー", salary: 520000, skill: 4 },
+        { name: "不動産投資家", salary: 460000, skill: 3 },
+        { name: "トレーダー", salary: 420000, skill: 4 },
+        { name: "会計コンサルタント", salary: 540000, skill: 4 },
+        { name: "ファンドアナリスト", salary: 620000, skill: 5 }
       ]
+    };
+
+    const courseProfiles = {
+      work: {
+        label: "仕事コース",
+        careers: "work",
+        age: 19,
+        money: 220000,
+        debt: 0,
+        happy: 50,
+        family: 0,
+        skillBonus: 0,
+        salaryMultiplier: 1.08,
+        paydayMultiplier: 1.08,
+        gainMultiplier: 1,
+        riskMultiplier: .95,
+        happyMultiplier: .95,
+        gambleBonus: 0,
+        story: "早く社会に出て、安定収入を積み上げる道。給料日が強く、リスクも少し抑えられます。"
+      },
+      college: {
+        label: "大学コース",
+        careers: "college",
+        age: 22,
+        money: 40000,
+        debt: 900000,
+        happy: 53,
+        family: 0,
+        skillBonus: 1,
+        salaryMultiplier: 1.08,
+        paydayMultiplier: 1.02,
+        gainMultiplier: 1,
+        riskMultiplier: 1,
+        happyMultiplier: 1,
+        gambleBonus: .03,
+        story: "奨学金を背負う代わりに、高いスキルと専門職で後半に伸びる道です。"
+      },
+      business: {
+        label: "起業コース",
+        careers: "business",
+        age: 20,
+        money: 120000,
+        debt: 350000,
+        happy: 48,
+        family: 0,
+        skillBonus: 1,
+        salaryMultiplier: 1,
+        paydayMultiplier: .92,
+        gainMultiplier: 1.22,
+        riskMultiplier: 1.18,
+        happyMultiplier: 1,
+        gambleBonus: .08,
+        story: "失敗の痛みは大きいが、成功時の収入も大きい挑戦型の道です。"
+      },
+      event: {
+        label: "イベントコース",
+        careers: "event",
+        age: 20,
+        money: 90000,
+        debt: 80000,
+        happy: 60,
+        family: 0,
+        skillBonus: 1,
+        salaryMultiplier: .94,
+        paydayMultiplier: .9,
+        gainMultiplier: .95,
+        riskMultiplier: 1.02,
+        happyMultiplier: 1.35,
+        gambleBonus: .04,
+        story: "収入より体験と人との出会いを重視する道。幸せイベントの伸びが大きくなります。"
+      },
+      family: {
+        label: "家族コース",
+        careers: "family",
+        age: 21,
+        money: 120000,
+        debt: 120000,
+        happy: 58,
+        family: 1,
+        skillBonus: 0,
+        salaryMultiplier: .96,
+        paydayMultiplier: .95,
+        gainMultiplier: .95,
+        riskMultiplier: .88,
+        happyMultiplier: 1.2,
+        familyBonus: 1,
+        gambleBonus: 0,
+        story: "家族との時間を大切にする道。収入は控えめですが、家族と幸せが増えやすくなります。"
+      },
+      investor: {
+        label: "投資コース",
+        careers: "investor",
+        age: 23,
+        money: 500000,
+        debt: 250000,
+        happy: 47,
+        family: 0,
+        skillBonus: 1,
+        salaryMultiplier: 1,
+        paydayMultiplier: .96,
+        gainMultiplier: 1.18,
+        riskMultiplier: 1.1,
+        happyMultiplier: .9,
+        gambleBonus: .1,
+        story: "初期資金を使って資産を増やす道。お金の増減が大きく、投資系イベントに強いです。"
+      }
     };
 
     const choices = {
@@ -1007,9 +1247,58 @@
       ]
     };
 
+    const choiceStories = {
+      study: "仕事の帰り道、駅前の講座案内が目に入った。今のまま進むか、時間を削って学ぶかを決める時です。",
+      shopping: "古くなった道具や家電が増えてきた。便利さを買うか、今あるもので工夫するかを選びます。",
+      sideJob: "収入を増やせる話が舞い込んだ。ただし自由な時間は減り、体力も削られます。",
+      career: "上司との面談をきっかけに、将来の働き方を考え始めた。残るか、動くか、役割を変えるか。",
+      relationship: "大切な人との距離が近づいている。仕事、友人、家族、自分の時間のバランスを選びます。",
+      invest: "まとまった資金の使い道を考える時期。守るか、増やすか、まず知識を得るか。",
+      childEdu: "家族の将来に関わる教育の相談が始まった。お金、時間、制度のどれを重視するか。",
+      travel: "忙しい日々の合間に休暇が取れた。遠くへ行くか、近くで休むか、貯金に回すか。",
+      health: "健康診断の通知が届いた。体に向き合うか、生活を変えるか、先送りするか。",
+      car: "移動手段を見直すタイミング。便利さ、費用、暮らし方のどれを優先するか。",
+      home: "住まいの更新時期が来た。大きな決断をするか、身軽さを残すか。",
+      community: "地域の人から手伝いを頼まれた。時間、お金、関わり方を選びます。",
+      reskill: "世の中の変化を感じ、学び直しが必要だと思い始めた。どれだけ本気で向き合うか。",
+      startup: "自分のアイデアを形にできそうな機会が来た。大きく踏み出すか、小さく試すか。",
+      pet: "日常に新しい相棒を迎える話が出た。責任と癒やしのバランスを選びます。",
+      insurance: "将来の不安に備える提案を受けた。安心を買うか、現金を残すか。",
+      parents: "親との時間について考える出来事があった。お金、時間、言葉のどれで支えるか。",
+      hobby: "続けてきた趣味が生活の一部になってきた。深めるか、手放すか、仕事にするか。",
+      lottery: "売り場の前で足が止まった。夢を買うか、確実に残すか。",
+      loan: "借金の残高を見直す通知が届いた。早く軽くするか、今の生活を優先するか。",
+      remoteWork: "働き方を変える選択肢が出てきた。環境、場所、人との関わり方を選びます。",
+      moveCity: "暮らす場所を変えられるチャンスが来た。収入か、環境か、二つの生活か。",
+      finance: "家計の数字を見て、放置できないと感じた。専門家、自力、現状維持を選びます。",
+      inheritance: "家族の資産や思い出をどう扱うか話し合う時期になった。",
+      dream: "長く胸に残っていた夢が、もう一度動き出した。挑むか、小さく始めるか、誰かに託すか。",
+      pension: "引退後の生活が現実味を帯びてきた。現金、年金、働き続ける準備を選びます。",
+      retire: "働き方の終盤が見えてきた。身軽になるか、思い出を優先するか、まだ働くか。",
+      lastTrip: "人生の節目に、最後の大きな旅を計画することになった。",
+      mentor: "若い世代から相談を受けた。経験をどう渡すかを選びます。",
+      volunteer: "誰かの役に立てる場所が見つかった。関わり方を自分で決めます。",
+      techUpgrade: "新しい技術が生活に入り込んできた。受け入れるか、自分の速度で進むか。",
+      festival: "町の祭りが近づき、参加の誘いが来た。楽しむだけか、運営側に回るか。",
+      book: "これまでの経験を形に残せるかもしれない。発信の仕方を選びます。",
+      secondHome: "静かな場所で過ごす生活に憧れが出てきた。所有するか、借りるか、持たないか。",
+      repair: "家のあちこちに傷みが見えてきた。修繕への向き合い方を選びます。",
+      art: "表現や作品に心が動いた。作る、買う、支える、どれを選ぶか。",
+      medicalChoice: "体調の不安に向き合う必要が出てきた。お金と安心の使い方を選びます。",
+      legacyChoice: "自分が残せるものについて考える日が来た。お金、知識、言葉をどう残すか。",
+      gift: "感謝を伝えたい相手がいる。何を贈るかは自分次第です。",
+      finalInvest: "最後に資産をどう扱うかを決める場面。守るか、増やすか、勝負するか。",
+      finalMove: "これからの暮らしを見据えて、最後の住まいを考えます。",
+      farewell: "人生の節目に、周囲へ感謝を伝える機会が訪れた。"
+    };
+
     const state = {
       started: false,
       finished: false,
+      playerCount: 1,
+      configuringPlayer: 0,
+      activePlayer: 0,
+      players: [],
       position: 0,
       age: 18,
       money: 0,
@@ -1019,6 +1308,8 @@
       skill: 0,
       salary: 0,
       career: "未定",
+      course: "未定",
+      modifiers: courseProfiles.work,
       insurance: false,
       spinning: false,
       lastSpin: 0,
@@ -1028,11 +1319,13 @@
 
     const boardEl = document.querySelector("#board");
     const tokenEl = document.querySelector("#token");
+    const playerNameEl = document.querySelector("#playerName");
     const ageEl = document.querySelector("#age");
     const moneyEl = document.querySelector("#money");
     const debtEl = document.querySelector("#debt");
     const happyEl = document.querySelector("#happy");
     const familyEl = document.querySelector("#family");
+    const courseEl = document.querySelector("#course");
     const careerEl = document.querySelector("#career");
     const salaryEl = document.querySelector("#salary");
     const skillEl = document.querySelector("#skill");
@@ -1044,8 +1337,8 @@
     const effectLayerEl = document.querySelector("#effectLayer");
     const spinButton = document.querySelector("#spinButton");
     const newButton = document.querySelector("#newButton");
-    const workButton = document.querySelector("#workButton");
-    const collegeButton = document.querySelector("#collegeButton");
+    const courseButtons = document.querySelectorAll("[data-course]");
+    const playerButtons = document.querySelectorAll("[data-players]");
     const statusText = document.querySelector("#statusText");
     const wheelEl = document.querySelector("#wheel");
     const spinValueEl = document.querySelector("#spinValue");
@@ -1061,6 +1354,128 @@
 
     function pick(items) {
       return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function makePlayer(index) {
+      return {
+        name: `P${index + 1}`,
+        started: false,
+        finished: false,
+        finalScore: null,
+        position: 0,
+        age: 18,
+        money: 0,
+        debt: 0,
+        happy: 50,
+        family: 0,
+        skill: 0,
+        salary: 0,
+        career: "未定",
+        course: "未定",
+        modifiers: courseProfiles.work,
+        insurance: false,
+        logs: []
+      };
+    }
+
+    function loadPlayer(index) {
+      const player = state.players[index];
+      state.activePlayer = index;
+      state.position = player.position;
+      state.age = player.age;
+      state.money = player.money;
+      state.debt = player.debt;
+      state.happy = player.happy;
+      state.family = player.family;
+      state.skill = player.skill;
+      state.salary = player.salary;
+      state.career = player.career;
+      state.course = player.course;
+      state.modifiers = player.modifiers;
+      state.insurance = player.insurance;
+      state.finished = player.finished;
+      state.logs = player.logs;
+      moveToken();
+      updateHud();
+      updateTimeline();
+    }
+
+    function saveActivePlayer() {
+      const player = state.players[state.activePlayer];
+      if (!player) return;
+      Object.assign(player, {
+        position: state.position,
+        age: state.age,
+        money: state.money,
+        debt: state.debt,
+        happy: state.happy,
+        family: state.family,
+        skill: state.skill,
+        salary: state.salary,
+        career: state.career,
+        course: state.course,
+        modifiers: state.modifiers,
+        insurance: state.insurance,
+        finished: state.finished,
+        logs: state.logs
+      });
+    }
+
+    function playerScore(player) {
+      return player.money - player.debt + player.happy * 20000 + player.family * 150000 + player.skill * 80000;
+    }
+
+    function nextActivePlayerIndex() {
+      for (let offset = 1; offset <= state.players.length; offset += 1) {
+        const index = (state.activePlayer + offset) % state.players.length;
+        if (!state.players[index].finished) return index;
+      }
+      return -1;
+    }
+
+    function allPlayersFinished() {
+      return state.players.length > 0 && state.players.every((player) => player.finished);
+    }
+
+    function showStandings() {
+      const standings = [...state.players]
+        .sort((a, b) => (b.finalScore ?? playerScore(b)) - (a.finalScore ?? playerScore(a)))
+        .map((player, index) => `${index + 1}位 ${player.name}: ${yen(player.finalScore ?? playerScore(player))}`)
+        .join(" / ");
+      eventTitleEl.textContent = "全員ゴール";
+      eventTextEl.textContent = standings;
+      statusText.textContent = "New Lifeで新しい対戦を始められます。";
+      spinButton.disabled = true;
+      addLog(`最終順位: ${standings}`);
+      updateTimeline();
+    }
+
+    function activateNextTurn() {
+      saveActivePlayer();
+      if (allPlayersFinished()) {
+        showStandings();
+        return;
+      }
+      const nextIndex = nextActivePlayerIndex();
+      if (nextIndex < 0) {
+        showStandings();
+        return;
+      }
+      loadPlayer(nextIndex);
+      eventTitleEl.textContent = `${state.players[state.activePlayer].name} のターン`;
+      eventTextEl.textContent = `${state.course}の${state.career}。ルーレットを回してください。`;
+      statusText.textContent = `${state.players[state.activePlayer].name} のターンです。`;
+      spinButton.disabled = false;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
     }
 
     function effectKindFor(space, outcome = null) {
@@ -1136,6 +1551,9 @@
       Object.assign(state, {
         started: false,
         finished: false,
+        configuringPlayer: 0,
+        activePlayer: 0,
+        players: Array.from({ length: state.playerCount }, (_, index) => makePlayer(index)),
         position: 0,
         age: 18,
         money: 0,
@@ -1145,6 +1563,8 @@
         skill: 0,
         salary: 0,
         career: "未定",
+        course: "未定",
+        modifiers: courseProfiles.work,
         insurance: false,
         spinning: false,
         lastSpin: 0,
@@ -1152,39 +1572,62 @@
       });
       spinValueEl.textContent = "-";
       eventTitleEl.textContent = "新しい人生を始めよう";
-      eventTextEl.textContent = "仕事コースか大学コースを選ぶとスタートします。ゴール時の総合資産で勝負です。";
-      statusText.textContent = "最初の分岐を選んでください。";
+      eventTextEl.textContent = `${state.playerCount}人プレイ。P1のコースを選んでください。全員のコース選択が終わると開始します。`;
+      statusText.textContent = `P1/${state.playerCount} のコース選択`;
       choiceRowEl.innerHTML = "";
       spinButton.disabled = true;
-      workButton.disabled = false;
-      collegeButton.disabled = false;
+      playerButtons.forEach((button) => {
+        button.disabled = false;
+        button.classList.toggle("active", Number(button.dataset.players) === state.playerCount);
+      });
+      courseButtons.forEach((button) => {
+        button.disabled = false;
+      });
       updateHud();
       updateTimeline();
       moveToken();
     }
 
     function startPath(path) {
-      const career = pick(careers[path]);
-      state.started = true;
-      state.career = career.name;
-      state.salary = career.salary;
-      state.skill = career.skill;
-      if (path === "college") {
-        state.debt = 900000;
-        state.age = 22;
-        state.happy += 3;
-        addLog(`大学コースを選択。${career.name}として就職。奨学金${yen(900000)}。`);
-      } else {
-        state.money = 180000;
-        state.age = 19;
-        addLog(`仕事コースを選択。${career.name}として早めに収入を得た。`);
+      const profile = courseProfiles[path];
+      const career = pick(careers[profile.careers]);
+      const player = state.players[state.configuringPlayer];
+      Object.assign(player, {
+        started: true,
+        course: profile.label,
+        modifiers: profile,
+        career: career.name,
+        salary: Math.round(career.salary * profile.salaryMultiplier),
+        skill: career.skill + profile.skillBonus,
+        money: profile.money,
+        debt: profile.debt,
+        age: profile.age,
+        happy: profile.happy,
+        family: profile.family,
+        logs: [`${profile.label}を選択。${career.name}として出発。${profile.story}`]
+      });
+      if (state.configuringPlayer < state.playerCount - 1) {
+        state.configuringPlayer += 1;
+        eventTitleEl.textContent = `${state.players[state.configuringPlayer].name} のコース選択`;
+        eventTextEl.textContent = `${state.players[state.configuringPlayer].name} のコースを選んでください。`;
+        statusText.textContent = `${state.players[state.configuringPlayer].name}/${state.playerCount} のコース選択`;
+        triggerEffect("choice", "Next");
+        updateHud();
+        return;
       }
-      workButton.disabled = true;
-      collegeButton.disabled = true;
+      state.started = true;
+      state.activePlayer = 0;
+      loadPlayer(0);
+      courseButtons.forEach((button) => {
+        button.disabled = true;
+      });
+      playerButtons.forEach((button) => {
+        button.disabled = true;
+      });
       spinButton.disabled = false;
       eventTitleEl.textContent = "人生スタート";
-      eventTextEl.textContent = `${state.career}として出発。ルーレットを回してください。`;
-      statusText.textContent = "Spinで進みます。Spaceキーでも回せます。";
+      eventTextEl.textContent = `${state.players[state.activePlayer].name} のターン。${state.course}: ${state.modifiers.story} ${state.career}として出発します。`;
+      statusText.textContent = `${state.players[state.activePlayer].name} のターンです。`;
       triggerEffect("choice", "Start");
       updateHud();
       updateTimeline();
@@ -1197,10 +1640,12 @@
 
     function updateHud() {
       ageEl.textContent = state.age;
+      playerNameEl.textContent = state.started ? (state.players[state.activePlayer]?.name || "P1") : `P${state.configuringPlayer + 1}`;
       moneyEl.textContent = yen(state.money);
       debtEl.textContent = yen(state.debt);
       happyEl.textContent = state.happy;
       familyEl.textContent = state.family;
+      courseEl.textContent = state.course;
       careerEl.textContent = state.career;
       salaryEl.textContent = yen(state.salary);
       skillEl.textContent = state.skill;
@@ -1303,6 +1748,7 @@
         state.happy += 5;
       }
       amount += space.money || 0;
+      amount = Math.round(amount * state.modifiers.paydayMultiplier);
       applyMoney(amount);
       state.happy = clamp(state.happy + (space.happy || 0), 0, 100);
       const text = space.promote
@@ -1315,6 +1761,8 @@
     }
 
     function applyMoney(amount) {
+      if (amount > 0) amount = Math.round(amount * state.modifiers.gainMultiplier);
+      if (amount < 0) amount = Math.round(amount * state.modifiers.riskMultiplier);
       if (amount >= 0) {
         state.money += amount;
         return;
@@ -1335,23 +1783,58 @@
       }
       applyMoney(money);
       state.debt = Math.max(0, state.debt + (effect.debt || 0));
-      state.happy = clamp(state.happy + (effect.happy || 0), 0, 100);
-      state.family = Math.max(0, state.family + (effect.family || 0));
+      const happyChange = effect.happy ? Math.round(effect.happy * state.modifiers.happyMultiplier) : 0;
+      const familyChange = (effect.family || 0) > 0 ? (effect.family || 0) + (state.modifiers.familyBonus || 0) : (effect.family || 0);
+      state.happy = clamp(state.happy + happyChange, 0, 100);
+      state.family = Math.max(0, state.family + familyChange);
       state.skill = Math.max(0, state.skill + (effect.skill || 0));
       state.salary = Math.max(0, state.salary + (effect.salary || 0));
       if (effect.insurance) state.insurance = true;
     }
 
+    function choiceTitle(option) {
+      return option.title || option.text.split(":")[0];
+    }
+
+    function choiceDetail(option) {
+      const parts = option.text.split(":");
+      if (parts.length > 1) return parts.slice(1).join(":").trim();
+      return "この行動を選びます";
+    }
+
+    function renderChoiceButton(option, index, prefix, onClick) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.innerHTML = `
+        <span class="choice-label">${index + 1}</span>
+        <span class="choice-title">${escapeHtml(prefix)}${escapeHtml(choiceTitle(option))}</span>
+        <span class="choice-detail">${escapeHtml(choiceDetail(option))}</span>
+      `;
+      button.addEventListener("click", onClick);
+      return button;
+    }
+
+    function resultStory(space, option, extra) {
+      if (option.story) return option.story;
+      const title = choiceTitle(option);
+      const changes = [];
+      if (option.money) changes.push(option.money > 0 ? "お金に余裕が生まれた" : "まとまった支出が発生した");
+      if (option.debt) changes.push(option.debt > 0 ? "借金を背負った" : "借金を減らした");
+      if (option.salary) changes.push(option.salary > 0 ? "年収が上がった" : "収入は少し下がった");
+      if (option.skill) changes.push("経験値が増えた");
+      if (option.family) changes.push("家族とのつながりが深まった");
+      if (option.happy) changes.push(option.happy > 0 ? "気持ちは明るくなった" : "少し心が疲れた");
+      if (option.insurance) changes.push("将来への備えができた");
+      const summary = changes.length ? changes.join("、") : "大きな変化はないが、自分で選んだ実感が残った";
+      return `あなたは「${title}」を選んだ。${extra ? `${extra} ` : ""}${summary}。`;
+    }
+
     function showChoice(space) {
       const options = choices[space.choice];
-      eventTextEl.textContent = space.branches ? "イベントを選んだあと、進むルートも選びます。" : "どちらを選びますか？";
+      eventTextEl.textContent = choiceStories[space.choice] || (space.branches ? "イベントを選んだあと、進むルートも選びます。" : "この場面でどう行動するかを選んでください。");
       choiceRowEl.innerHTML = "";
-      options.forEach((option) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = option.text;
-        button.addEventListener("click", () => chooseOption(space, option));
-        choiceRowEl.append(button);
+      options.forEach((option, index) => {
+        choiceRowEl.append(renderChoiceButton(option, index, "選ぶ: ", () => chooseOption(space, option)));
       });
     }
 
@@ -1359,19 +1842,19 @@
       choiceRowEl.innerHTML = "";
       let extra = "";
       if (option.gamble) {
-        const won = Math.random() < .48 + state.skill * .03;
+        const won = Math.random() < .48 + state.skill * .03 + state.modifiers.gambleBonus;
         option = { ...option, money: won ? option.gamble[0] : option.gamble[1] };
         extra = won ? "勝負は成功。" : "勝負は失敗。";
       }
       if (option.startup) {
-        const won = Math.random() < .38 + state.skill * .05;
+        const won = Math.random() < .38 + state.skill * .05 + state.modifiers.gambleBonus;
         option = won
           ? { ...option, money: 900000, salary: 180000, happy: 6 }
           : { ...option, debt: 500000, happy: -8 };
         extra = won ? "事業は軌道に乗った。" : "事業は苦戦した。";
       }
       applyEffect(option);
-      const text = `${option.text}${extra ? ` ${extra}` : ""}`;
+      const text = resultStory(space, option, extra);
       eventTextEl.textContent = text;
       addLog(`${space.label}: ${text}`);
       const kind = effectKindFor(space, option);
@@ -1390,15 +1873,11 @@
 
     function showBranches(space) {
       eventTitleEl.textContent = "進路を選択";
-      eventTextEl.textContent = "次に進むルートを選んでください。選んだルートで現在地や状態が変わります。";
+      eventTextEl.textContent = "さきほどの選択を受けて、これからどの道を進むかを決めます。ルートによって現在地や状態が変わります。";
       choiceRowEl.innerHTML = "";
       spinButton.disabled = true;
-      space.branches.forEach((branch) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.textContent = branch.text;
-        button.addEventListener("click", () => chooseBranch(space, branch));
-        choiceRowEl.append(button);
+      space.branches.forEach((branch, index) => {
+        choiceRowEl.append(renderChoiceButton(branch, index, "進む: ", () => chooseBranch(space, branch)));
       });
     }
 
@@ -1413,8 +1892,8 @@
       const current = spaces[state.position];
       const moveText = branch.moveBy ? ` 現在地は「${current.label}」。` : "";
       eventTitleEl.textContent = "ルート決定";
-      eventTextEl.textContent = `${branch.text}${moveText}`;
-      addLog(`${space.label}の分岐: ${branch.text}`);
+      eventTextEl.textContent = `あなたは「${choiceTitle(branch)}」を選んだ。これからの数年の進み方が変わった。${moveText}`;
+      addLog(`${space.label}の分岐: ${eventTextEl.textContent}`);
       triggerEffect(effectKindFor(space, branch), branch.moveBy ? `${branch.moveBy}マス` : "分岐");
       updateHud();
       updateTimeline();
@@ -1426,7 +1905,7 @@
     }
 
     function applyMarket() {
-      const amount = Math.random() < .5 ? 260000 : -240000;
+      const amount = Math.random() < .5 + state.modifiers.gambleBonus ? 260000 : -240000;
       applyMoney(amount);
       state.happy = clamp(state.happy + (amount > 0 ? 4 : -5), 0, 100);
       const text = amount > 0
@@ -1441,8 +1920,13 @@
 
     function enableSpin() {
       if (!state.finished) {
-        spinButton.disabled = false;
-        statusText.textContent = "次のルーレットを回してください。";
+        if (state.playerCount > 1) {
+          activateNextTurn();
+        } else {
+          saveActivePlayer();
+          spinButton.disabled = false;
+          statusText.textContent = "次のルーレットを回してください。";
+        }
       }
     }
 
@@ -1450,19 +1934,32 @@
       state.finished = true;
       spinButton.disabled = true;
       const score = state.money - state.debt + state.happy * 20000 + state.family * 150000 + state.skill * 80000;
+      state.players[state.activePlayer].finalScore = score;
       const title = score >= 2500000 ? "豊かな人生" : score >= 1000000 ? "安定した人生" : "波乱の人生";
-      eventTitleEl.textContent = `Goal: ${title}`;
+      eventTitleEl.textContent = `${state.players[state.activePlayer].name} Goal: ${title}`;
       eventTextEl.textContent = `最終スコアは${yen(score)}。現金${yen(state.money)}、借金${yen(state.debt)}、幸せ${state.happy}、家族${state.family}人、スキル${state.skill}で計算しました。`;
-      statusText.textContent = "New Lifeで別の人生を始められます。";
+      statusText.textContent = state.playerCount > 1 ? "次のプレイヤーへ移ります。" : "New Lifeで別の人生を始められます。";
       addLog(`ゴール: 最終スコア ${yen(score)}`);
       triggerEffect("goal", "Goal");
       updateTimeline();
+      saveActivePlayer();
+      if (state.playerCount > 1) {
+        window.setTimeout(activateNextTurn, 1200);
+      }
     }
 
     spinButton.addEventListener("click", spin);
     newButton.addEventListener("click", resetGame);
-    workButton.addEventListener("click", () => startPath("work"));
-    collegeButton.addEventListener("click", () => startPath("college"));
+    playerButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (state.started) return;
+        state.playerCount = Number(button.dataset.players);
+        resetGame();
+      });
+    });
+    courseButtons.forEach((button) => {
+      button.addEventListener("click", () => startPath(button.dataset.course));
+    });
     document.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
         event.preventDefault();
