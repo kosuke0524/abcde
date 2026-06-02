@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Life Path Board</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111417;
+      --panel: #1d2227;
+      --panel-2: #252b31;
+      --line: #3a444d;
+      --text: #f6f2e9;
+      --muted: #aeb7be;
+      --cash: #6fe3a2;
+      --sun: #f4bf54;
+      --sea: #72b7ff;
+      --rose: #ff7b73;
+      --violet: #b69cff;
+      --road: #303840;
+      --shadow: 0 18px 46px rgba(0, 0, 0, .34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 16% 14%, rgba(111, 227, 162, .16), transparent 28%),
+        radial-gradient(circle at 86% 18%, rgba(244, 191, 84, .12), transparent 30%),
+        linear-gradient(135deg, #111417 0%, #192025 52%, #121619 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 16px;
+      background: var(--sun);
+      color: #15120b;
+      font: inherit;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: default;
+      opacity: .56;
+    }
+
+    .shell {
+      width: min(1240px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.65rem, 4vw, 3.15rem);
+      line-height: 1;
+      font-weight: 950;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(76px, 1fr));
+      gap: 8px;
+      min-width: min(570px, 100%);
+    }
+
+    .stat,
+    .panel,
+    .board-wrap,
+    .event-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(29, 34, 39, .9);
+    }
+
+    .stat {
+      min-height: 56px;
+      padding: 8px 10px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 1.16rem;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .board-wrap {
+      position: relative;
+      overflow: hidden;
+      min-height: 650px;
+      padding: 22px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, .04), transparent 42%),
+        radial-gradient(circle at 50% 50%, rgba(114, 183, 255, .12), transparent 48%),
+        #171d22;
+      box-shadow: var(--shadow);
+    }
+
+    .board {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 606px;
+    }
+
+    .road {
+      position: absolute;
+      inset: 8%;
+      border: 22px solid var(--road);
+      border-radius: 34px;
+      opacity: .74;
+    }
+
+    .road::before {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border: 2px dashed rgba(246, 242, 233, .24);
+      border-radius: 26px;
+    }
+
+    .space {
+      position: absolute;
+      width: clamp(50px, 6vw, 72px);
+      min-height: 52px;
+      border: 1px solid rgba(246, 242, 233, .18);
+      border-radius: 8px;
+      padding: 7px;
+      transform: translate(-50%, -50%);
+      background: #2a3239;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, .2);
+    }
+
+    .space small {
+      display: block;
+      color: rgba(246, 242, 233, .7);
+      font-size: .68rem;
+      line-height: 1;
+    }
+
+    .space strong {
+      display: block;
+      margin-top: 5px;
+      font-size: clamp(.66rem, 1.05vw, .82rem);
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+    }
+
+    .space.payday {
+      background: linear-gradient(160deg, #235640, #2f7454);
+    }
+
+    .space.choice {
+      background: linear-gradient(160deg, #344263, #3c5481);
+    }
+
+    .space.family {
+      background: linear-gradient(160deg, #6d394f, #934b67);
+    }
+
+    .space.risk {
+      background: linear-gradient(160deg, #703c38, #984d46);
+    }
+
+    .space.goal {
+      background: linear-gradient(160deg, #806029, #b8872b);
+    }
+
+    .token {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--sea);
+      border: 4px solid #f6f2e9;
+      box-shadow: 0 0 0 5px rgba(114, 183, 255, .24), 0 10px 20px rgba(0, 0, 0, .35);
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      transition: left .28s ease, top .28s ease;
+    }
+
+    .token::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      left: 7px;
+      top: 5px;
+      border-radius: 50%;
+      background: rgba(246, 242, 233, .86);
+    }
+
+    .event-box {
+      padding: 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .event-title {
+      margin: 0 0 5px;
+      font-size: 1.12rem;
+    }
+
+    .event-text {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .event-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: .94rem;
+    }
+
+    .panel ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .spinner {
+      display: grid;
+      grid-template-columns: 108px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+    }
+
+    .wheel {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        conic-gradient(from 0deg, var(--sun), var(--cash), var(--sea), var(--violet), var(--rose), var(--sun));
+      box-shadow: inset 0 0 0 10px rgba(17, 20, 23, .38), 0 12px 28px rgba(0, 0, 0, .25);
+      transition: transform .75s cubic-bezier(.22, .86, .34, 1);
+    }
+
+    .wheel strong {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #f6f2e9;
+      color: #171d22;
+      font-size: 1.7rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .controls {
+      display: grid;
+      gap: 8px;
+    }
+
+    .secondary {
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+    }
+
+    .choice-row {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .choice-row button {
+      width: 100%;
+      color: var(--text);
+      background: #2d3842;
+      border: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 8px;
+      max-height: 230px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .log {
+      border-bottom: 1px solid rgba(246, 242, 233, .09);
+      padding-bottom: 8px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.35;
+    }
+
+    .log:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    @media (max-width: 980px) {
+      .shell {
+        grid-template-columns: 1fr;
+        padding: 14px;
+      }
+
+      .side {
+        justify-content: start;
+      }
+
+      .topbar,
+      .event-box {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .topbar {
+        display: flex;
+      }
+
+      .event-box {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .event-actions {
+        justify-content: stretch;
+      }
+
+      .event-actions button {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .board-wrap {
+        min-height: 620px;
+        padding: 10px;
+      }
+
+      .board {
+        min-height: 590px;
+      }
+
+      .space {
+        width: 58px;
+        min-height: 54px;
+        padding: 5px;
+      }
+
+      .space strong {
+        font-size: .68rem;
+      }
+
+      .spinner {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="main" aria-label="人生すごろくゲーム">
+      <div class="topbar">
+        <h1>Life Path Board</h1>
+        <div class="stats" aria-live="polite">
+          <div class="stat"><span>Age</span><strong id="age">18</strong></div>
+          <div class="stat"><span>Money</span><strong id="money">¥0</strong></div>
+          <div class="stat"><span>Debt</span><strong id="debt">¥0</strong></div>
+          <div class="stat"><span>Happy</span><strong id="happy">50</strong></div>
+          <div class="stat"><span>Family</span><strong id="family">0</strong></div>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board" id="board">
+          <div class="road" aria-hidden="true"></div>
+          <div class="token" id="token" aria-label="現在地"></div>
+        </div>
+      </div>
+
+      <section class="event-box" aria-live="polite">
+        <div>
+          <h2 class="event-title" id="eventTitle">新しい人生を始めよう</h2>
+          <p class="event-text" id="eventText">仕事コースか大学コースを選ぶとスタートします。ゴール時の総合資産で勝負です。</p>
+          <div class="choice-row" id="choiceRow"></div>
+        </div>
+        <div class="event-actions">
+          <button id="spinButton" type="button" disabled>Spin</button>
+          <button class="secondary" id="newButton" type="button">New Life</button>
+        </div>
+      </section>
+    </section>
+
+    <aside class="side">
+      <section class="panel">
+        <h2>Roulette</h2>
+        <div class="spinner">
+          <div class="wheel" id="wheel"><strong id="spinValue">-</strong></div>
+          <div class="controls">
+            <p id="statusText">最初の分岐を選んでください。</p>
+            <button class="secondary" id="workButton" type="button">仕事コース</button>
+            <button class="secondary" id="collegeButton" type="button">大学コース</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Profile</h2>
+        <ul>
+          <li>職業: <strong id="career">未定</strong></li>
+          <li>年収: <strong id="salary">¥0</strong></li>
+          <li>スキル: <strong id="skill">0</strong></li>
+          <li>保険: <strong id="insurance">なし</strong></li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>History</h2>
+        <div class="timeline" id="timeline">
+          <div class="log">まだイベントはありません。</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Rules</h2>
+        <ul>
+          <li>ルーレットで進み、止まったマスのイベントを解決</li>
+          <li>給料日は職業ごとの年収が入る</li>
+          <li>借金はゴール時に差し引かれる</li>
+          <li>幸せと家族も最終スコアに加算</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+
+  <script>
+    const spaces = [
+      { label: "Start", type: "choice", x: 8, y: 86, text: "人生のスタート。最初の選択が効いてきます。" },
+      { label: "初任給", type: "payday", x: 18, y: 86 },
+      { label: "引越し", type: "risk", x: 28, y: 86, money: -120000, happy: 4, text: "広い部屋に引越し。出費は痛いが気分は上がる。" },
+      { label: "資格", type: "choice", x: 38, y: 86, choice: "study" },
+      { label: "友人", type: "family", x: 48, y: 86, happy: 7, text: "古い友人と再会。元気をもらった。" },
+      { label: "買い物", type: "choice", x: 58, y: 86, choice: "shopping" },
+      { label: "給料日", type: "payday", x: 68, y: 86 },
+      { label: "副業", type: "choice", x: 78, y: 86, choice: "sideJob" },
+      { label: "事故", type: "risk", x: 88, y: 82, money: -180000, happy: -5, text: "急な修理費。保険があれば半額で済む。" },
+      { label: "転職", type: "choice", x: 90, y: 72, choice: "career" },
+      { label: "恋愛", type: "choice", x: 90, y: 62, choice: "relationship" },
+      { label: "結婚", type: "family", x: 90, y: 52, family: 1, money: -260000, happy: 12, text: "大切なパートナーと新生活。" },
+      { label: "給料日", type: "payday", x: 90, y: 42 },
+      { label: "投資", type: "choice", x: 90, y: 32, choice: "invest" },
+      { label: "出産", type: "family", x: 90, y: 22, family: 1, money: -220000, happy: 13, text: "家族が増えた。生活費も増えた。" },
+      { label: "教育", type: "choice", x: 82, y: 12, choice: "childEdu" },
+      { label: "税金", type: "risk", x: 72, y: 12, money: -160000, happy: -2, text: "税金と手続きでまとまった支出。" },
+      { label: "昇進", type: "payday", x: 62, y: 12, promote: true },
+      { label: "旅行", type: "choice", x: 52, y: 12, choice: "travel" },
+      { label: "健康診断", type: "choice", x: 42, y: 12, choice: "health" },
+      { label: "病気", type: "risk", x: 32, y: 12, money: -220000, happy: -8, text: "体調を崩した。保険があれば負担は半額。" },
+      { label: "車", type: "choice", x: 22, y: 12, choice: "car" },
+      { label: "家購入", type: "choice", x: 12, y: 18, choice: "home" },
+      { label: "給料日", type: "payday", x: 8, y: 28 },
+      { label: "地域活動", type: "choice", x: 8, y: 38, choice: "community" },
+      { label: "学び直し", type: "choice", x: 8, y: 48, choice: "reskill" },
+      { label: "起業", type: "choice", x: 8, y: 58, choice: "startup" },
+      { label: "ペット", type: "choice", x: 8, y: 68, choice: "pet" },
+      { label: "家族旅行", type: "family", x: 18, y: 72, money: -150000, happy: 11, text: "思い出が増えた。" },
+      { label: "給料日", type: "payday", x: 28, y: 72 },
+      { label: "市場変動", type: "risk", x: 38, y: 72, random: true },
+      { label: "保険", type: "choice", x: 48, y: 72, choice: "insurance" },
+      { label: "親孝行", type: "choice", x: 58, y: 72, choice: "parents" },
+      { label: "大出費", type: "risk", x: 68, y: 72, money: -320000, happy: -6, text: "予想外の出費。備えが試される。" },
+      { label: "表彰", type: "payday", x: 78, y: 68, money: 180000, happy: 8, text: "仕事ぶりが評価され臨時収入。" },
+      { label: "趣味", type: "choice", x: 78, y: 58, choice: "hobby" },
+      { label: "宝くじ", type: "choice", x: 78, y: 48, choice: "lottery" },
+      { label: "介護", type: "family", x: 78, y: 38, money: -170000, happy: -3, text: "家族を支える時期。支出はあるが大切な時間。" },
+      { label: "給料日", type: "payday", x: 68, y: 32 },
+      { label: "ローン整理", type: "choice", x: 58, y: 32, choice: "loan" },
+      { label: "在宅勤務", type: "choice", x: 48, y: 32, choice: "remoteWork" },
+      { label: "移住", type: "choice", x: 38, y: 32, choice: "moveCity" },
+      { label: "金融相談", type: "choice", x: 28, y: 32, choice: "finance" },
+      { label: "相続", type: "choice", x: 20, y: 42, choice: "inheritance" },
+      { label: "給料日", type: "payday", x: 30, y: 52 },
+      { label: "夢", type: "choice", x: 40, y: 52, choice: "dream" },
+      { label: "年金準備", type: "choice", x: 50, y: 52, choice: "pension" },
+      { label: "退職準備", type: "choice", x: 60, y: 52, choice: "retire" },
+      { label: "最後の旅", type: "choice", x: 50, y: 62, choice: "lastTrip" },
+      { label: "Goal", type: "goal", x: 40, y: 62, text: "ゴール。総合資産を計算します。" }
+    ];
+
+    const careers = {
+      work: [
+        { name: "販売マネージャー", salary: 360000, skill: 1 },
+        { name: "整備士", salary: 390000, skill: 2 },
+        { name: "クリエイター", salary: 340000, skill: 2 }
+      ],
+      college: [
+        { name: "エンジニア", salary: 520000, skill: 3 },
+        { name: "研究職", salary: 500000, skill: 4 },
+        { name: "医療専門職", salary: 560000, skill: 3 }
+      ]
+    };
+
+    const choices = {
+      study: [
+        { text: "夜間講座に通う: -¥120,000 / スキル+2", money: -120000, skill: 2, happy: -1 },
+        { text: "独学で済ませる: スキル+1", skill: 1 },
+        { text: "資格試験を一気に受ける: -¥220,000 / スキル+3", money: -220000, skill: 3, happy: -2 }
+      ],
+      shopping: [
+        { text: "最新家電を買う: -¥150,000 / 幸せ+6", money: -150000, happy: 6 },
+        { text: "中古でそろえる: -¥40,000 / 幸せ+2", money: -40000, happy: 2 },
+        { text: "買わずに貯める: +¥60,000", money: 60000 }
+      ],
+      sideJob: [
+        { text: "短期で稼ぐ: +¥220,000 / 幸せ-3", money: 220000, happy: -3 },
+        { text: "休む: 幸せ+5", happy: 5 },
+        { text: "スキル系副業: +¥120,000 / スキル+1", money: 120000, skill: 1 }
+      ],
+      career: [
+        { text: "転職に挑戦: 年収+¥120,000 / スキル+1", salary: 120000, skill: 1 },
+        { text: "今の職場で粘る: 幸せ+4", happy: 4 },
+        { text: "管理職を目指す: 年収+¥180,000 / 幸せ-2", salary: 180000, happy: -2 }
+      ],
+      relationship: [
+        { text: "真剣に向き合う: 幸せ+9 / 家族+1", happy: 9, family: 1 },
+        { text: "今は仕事優先: 年収+¥70,000 / 幸せ-2", salary: 70000, happy: -2 },
+        { text: "友人関係を広げる: 幸せ+5 / スキル+1", happy: 5, skill: 1 }
+      ],
+      invest: [
+        { text: "堅実投資: +¥180,000", money: 180000 },
+        { text: "勝負投資: 成功なら+¥520,000、失敗なら-¥260,000", gamble: [520000, -260000] },
+        { text: "勉強してから投資: -¥60,000 / スキル+1", money: -60000, skill: 1 }
+      ],
+      childEdu: [
+        { text: "教育費を惜しまない: -¥300,000 / スキル+1 / 幸せ+8", money: -300000, skill: 1, happy: 8 },
+        { text: "公的支援を調べる: スキル+1 / 幸せ+3", skill: 1, happy: 3 },
+        { text: "家族時間を増やす: 幸せ+10 / 年収-¥40,000", happy: 10, salary: -40000 }
+      ],
+      travel: [
+        { text: "海外旅行: -¥260,000 / 幸せ+14", money: -260000, happy: 14 },
+        { text: "近場で楽しむ: -¥60,000 / 幸せ+6", money: -60000, happy: 6 },
+        { text: "旅を我慢して貯金: +¥120,000 / 幸せ-2", money: 120000, happy: -2 }
+      ],
+      health: [
+        { text: "人間ドックを受ける: -¥90,000 / 幸せ+3", money: -90000, happy: 3 },
+        { text: "ジムに通う: -¥80,000 / 幸せ+6 / スキル+1", money: -80000, happy: 6, skill: 1 },
+        { text: "何もしない: 現金を守る / 幸せ-2", happy: -2 }
+      ],
+      car: [
+        { text: "新車を買う: 借金+¥700,000 / 幸せ+8", debt: 700000, happy: 8 },
+        { text: "中古車を買う: -¥220,000 / 幸せ+4", money: -220000, happy: 4 },
+        { text: "公共交通で暮らす: +¥80,000 / 幸せ-1", money: 80000, happy: -1 }
+      ],
+      home: [
+        { text: "家を買う: 借金+¥1,200,000 / 幸せ+16", debt: 1200000, happy: 16 },
+        { text: "賃貸を続ける: 現金を守る", happy: 2 },
+        { text: "郊外に小さく買う: 借金+¥700,000 / 幸せ+9", debt: 700000, happy: 9 }
+      ],
+      community: [
+        { text: "自治会を手伝う: 幸せ+5 / スキル+1", happy: 5, skill: 1 },
+        { text: "寄付する: -¥80,000 / 幸せ+7", money: -80000, happy: 7 },
+        { text: "今回は見送る: 変化なし" }
+      ],
+      reskill: [
+        { text: "本気で学ぶ: -¥180,000 / スキル+3", money: -180000, skill: 3 },
+        { text: "必要な分だけ学ぶ: スキル+1", skill: 1 },
+        { text: "会社の制度を使う: スキル+2 / 年収+¥40,000", skill: 2, salary: 40000 }
+      ],
+      startup: [
+        { text: "起業する: 成功なら+¥900,000、失敗なら借金+¥500,000", startup: true },
+        { text: "副業のまま育てる: +¥160,000 / 幸せ+2", money: 160000, happy: 2 },
+        { text: "共同創業する: 成功なら+¥650,000、失敗なら-¥180,000", gamble: [650000, -180000] }
+      ],
+      pet: [
+        { text: "ペットを迎える: -¥140,000 / 幸せ+12", money: -140000, happy: 12 },
+        { text: "保護活動に寄付: -¥60,000 / 幸せ+5", money: -60000, happy: 5 },
+        { text: "動画で癒やされる: 幸せ+2", happy: 2 }
+      ],
+      insurance: [
+        { text: "保険に入る: -¥100,000 / 事故と病気の支出半減", money: -100000, insurance: true },
+        { text: "入らない: 現金を残す", happy: 1 },
+        { text: "最低限だけ入る: -¥50,000 / 幸せ+2", money: -50000, insurance: true, happy: 2 }
+      ],
+      parents: [
+        { text: "旅行を贈る: -¥180,000 / 幸せ+10", money: -180000, happy: 10 },
+        { text: "毎月仕送り: -¥120,000 / 家族+1", money: -120000, family: 1 },
+        { text: "電話を増やす: 幸せ+4", happy: 4 }
+      ],
+      hobby: [
+        { text: "趣味に投資: -¥100,000 / 幸せ+10", money: -100000, happy: 10 },
+        { text: "道具を売る: +¥90,000 / 幸せ-3", money: 90000, happy: -3 },
+        { text: "趣味を仕事にする: 年収+¥60,000 / 幸せ+4", salary: 60000, happy: 4 }
+      ],
+      lottery: [
+        { text: "10枚だけ買う: 成功なら+¥400,000、失敗なら-¥30,000", gamble: [400000, -30000] },
+        { text: "買わない: +¥30,000", money: 30000 },
+        { text: "懸賞に応募: 幸せ+2", happy: 2 }
+      ],
+      loan: [
+        { text: "大きく返す: -¥400,000 / 借金-¥650,000", money: -400000, debt: -650000 },
+        { text: "少し返す: -¥150,000 / 借金-¥220,000", money: -150000, debt: -220000 },
+        { text: "返済を先送り: 幸せ-3", happy: -3 }
+      ],
+      remoteWork: [
+        { text: "在宅環境を整える: -¥120,000 / 年収+¥80,000 / 幸せ+4", money: -120000, salary: 80000, happy: 4 },
+        { text: "出社中心に戻す: スキル+1", skill: 1 },
+        { text: "地方で働く: 年収-¥50,000 / 幸せ+9", salary: -50000, happy: 9 }
+      ],
+      moveCity: [
+        { text: "地方移住: -¥200,000 / 幸せ+13 / 年収-¥60,000", money: -200000, happy: 13, salary: -60000 },
+        { text: "都会に残る: 年収+¥70,000 / 幸せ-2", salary: 70000, happy: -2 },
+        { text: "二拠点生活: 借金+¥300,000 / 幸せ+10", debt: 300000, happy: 10 }
+      ],
+      finance: [
+        { text: "専門家に相談: -¥80,000 / 借金-¥180,000 / スキル+1", money: -80000, debt: -180000, skill: 1 },
+        { text: "家計簿を始める: +¥90,000 / スキル+1", money: 90000, skill: 1 },
+        { text: "何となく続ける: 幸せ-1", happy: -1 }
+      ],
+      inheritance: [
+        { text: "相続を受ける: +¥420,000 / 幸せ-2", money: 420000, happy: -2 },
+        { text: "実家の整理をする: -¥90,000 / 幸せ+5", money: -90000, happy: 5 },
+        { text: "家族で話し合う: 家族+1 / 幸せ+4", family: 1, happy: 4 }
+      ],
+      dream: [
+        { text: "長年の夢に挑む: 成功なら+¥700,000、失敗なら-¥220,000", gamble: [700000, -220000] },
+        { text: "小さく始める: -¥80,000 / 幸せ+8 / スキル+1", money: -80000, happy: 8, skill: 1 },
+        { text: "夢を次世代に託す: 家族+1 / 幸せ+6", family: 1, happy: 6 }
+      ],
+      pension: [
+        { text: "年金を厚くする: -¥250,000 / 借金-¥120,000", money: -250000, debt: -120000 },
+        { text: "現金を残す: +¥100,000", money: 100000 },
+        { text: "長く働く準備: 年収+¥80,000 / スキル+1", salary: 80000, skill: 1 }
+      ],
+      retire: [
+        { text: "借金を繰上返済: -¥300,000 / 借金-¥500,000", money: -300000, debt: -500000 },
+        { text: "思い出を優先: 幸せ+8", happy: 8 },
+        { text: "退職後も働く: 年収+¥100,000 / 幸せ-1", salary: 100000, happy: -1 }
+      ],
+      lastTrip: [
+        { text: "豪華な旅: -¥350,000 / 幸せ+18", money: -350000, happy: 18 },
+        { text: "家族で温泉: -¥160,000 / 幸せ+10 / 家族+1", money: -160000, happy: 10, family: 1 },
+        { text: "家でゆっくり: 幸せ+5", happy: 5 }
+      ]
+    };
+
+    const state = {
+      started: false,
+      finished: false,
+      position: 0,
+      age: 18,
+      money: 0,
+      debt: 0,
+      happy: 50,
+      family: 0,
+      skill: 0,
+      salary: 0,
+      career: "未定",
+      insurance: false,
+      spinning: false,
+      lastSpin: 0,
+      wheelTurns: 0,
+      logs: []
+    };
+
+    const boardEl = document.querySelector("#board");
+    const tokenEl = document.querySelector("#token");
+    const ageEl = document.querySelector("#age");
+    const moneyEl = document.querySelector("#money");
+    const debtEl = document.querySelector("#debt");
+    const happyEl = document.querySelector("#happy");
+    const familyEl = document.querySelector("#family");
+    const careerEl = document.querySelector("#career");
+    const salaryEl = document.querySelector("#salary");
+    const skillEl = document.querySelector("#skill");
+    const insuranceEl = document.querySelector("#insurance");
+    const eventTitleEl = document.querySelector("#eventTitle");
+    const eventTextEl = document.querySelector("#eventText");
+    const choiceRowEl = document.querySelector("#choiceRow");
+    const spinButton = document.querySelector("#spinButton");
+    const newButton = document.querySelector("#newButton");
+    const workButton = document.querySelector("#workButton");
+    const collegeButton = document.querySelector("#collegeButton");
+    const statusText = document.querySelector("#statusText");
+    const wheelEl = document.querySelector("#wheel");
+    const spinValueEl = document.querySelector("#spinValue");
+    const timelineEl = document.querySelector("#timeline");
+
+    function yen(value) {
+      return `¥${Math.round(value).toLocaleString("ja-JP")}`;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function pick(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function renderBoard() {
+      boardEl.querySelectorAll(".space").forEach((space) => space.remove());
+      spaces.forEach((space, index) => {
+        const cell = document.createElement("div");
+        cell.className = `space ${space.type}`;
+        cell.style.left = `${space.x}%`;
+        cell.style.top = `${space.y}%`;
+        cell.innerHTML = `<small>${index}</small><strong>${space.label}</strong>`;
+        boardEl.append(cell);
+      });
+      moveToken();
+    }
+
+    function moveToken() {
+      const space = spaces[state.position];
+      tokenEl.style.left = `${space.x}%`;
+      tokenEl.style.top = `${space.y}%`;
+    }
+
+    function resetGame() {
+      Object.assign(state, {
+        started: false,
+        finished: false,
+        position: 0,
+        age: 18,
+        money: 0,
+        debt: 0,
+        happy: 50,
+        family: 0,
+        skill: 0,
+        salary: 0,
+        career: "未定",
+        insurance: false,
+        spinning: false,
+        lastSpin: 0,
+        logs: []
+      });
+      spinValueEl.textContent = "-";
+      eventTitleEl.textContent = "新しい人生を始めよう";
+      eventTextEl.textContent = "仕事コースか大学コースを選ぶとスタートします。ゴール時の総合資産で勝負です。";
+      statusText.textContent = "最初の分岐を選んでください。";
+      choiceRowEl.innerHTML = "";
+      spinButton.disabled = true;
+      workButton.disabled = false;
+      collegeButton.disabled = false;
+      updateHud();
+      updateTimeline();
+      moveToken();
+    }
+
+    function startPath(path) {
+      const career = pick(careers[path]);
+      state.started = true;
+      state.career = career.name;
+      state.salary = career.salary;
+      state.skill = career.skill;
+      if (path === "college") {
+        state.debt = 900000;
+        state.age = 22;
+        state.happy += 3;
+        addLog(`大学コースを選択。${career.name}として就職。奨学金${yen(900000)}。`);
+      } else {
+        state.money = 180000;
+        state.age = 19;
+        addLog(`仕事コースを選択。${career.name}として早めに収入を得た。`);
+      }
+      workButton.disabled = true;
+      collegeButton.disabled = true;
+      spinButton.disabled = false;
+      eventTitleEl.textContent = "人生スタート";
+      eventTextEl.textContent = `${state.career}として出発。ルーレットを回してください。`;
+      statusText.textContent = "Spinで進みます。Spaceキーでも回せます。";
+      updateHud();
+      updateTimeline();
+    }
+
+    function addLog(text) {
+      state.logs.unshift(text);
+      state.logs = state.logs.slice(0, 10);
+    }
+
+    function updateHud() {
+      ageEl.textContent = state.age;
+      moneyEl.textContent = yen(state.money);
+      debtEl.textContent = yen(state.debt);
+      happyEl.textContent = state.happy;
+      familyEl.textContent = state.family;
+      careerEl.textContent = state.career;
+      salaryEl.textContent = yen(state.salary);
+      skillEl.textContent = state.skill;
+      insuranceEl.textContent = state.insurance ? "あり" : "なし";
+    }
+
+    function updateTimeline() {
+      timelineEl.innerHTML = "";
+      if (state.logs.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "log";
+        empty.textContent = "まだイベントはありません。";
+        timelineEl.append(empty);
+        return;
+      }
+      state.logs.forEach((log) => {
+        const item = document.createElement("div");
+        item.className = "log";
+        item.textContent = log;
+        timelineEl.append(item);
+      });
+    }
+
+    function spin() {
+      if (!state.started || state.finished || state.spinning) return;
+      state.spinning = true;
+      spinButton.disabled = true;
+      choiceRowEl.innerHTML = "";
+      const value = Math.floor(Math.random() * 6) + 1;
+      state.lastSpin = value;
+      state.wheelTurns += 1;
+      spinValueEl.textContent = value;
+      wheelEl.style.transform = `rotate(${state.wheelTurns * 360 + value * 42}deg)`;
+      eventTitleEl.textContent = "移動中";
+      eventTextEl.textContent = `${value}マス進みます。`;
+      setTimeout(() => moveSteps(value), 720);
+    }
+
+    function moveSteps(steps) {
+      let moved = 0;
+      const timer = setInterval(() => {
+        state.position = Math.min(spaces.length - 1, state.position + 1);
+        state.age += 1;
+        moved += 1;
+        moveToken();
+        updateHud();
+        if (moved >= steps || state.position >= spaces.length - 1) {
+          clearInterval(timer);
+          resolveSpace();
+        }
+      }, 260);
+    }
+
+    function resolveSpace() {
+      const space = spaces[state.position];
+      state.spinning = false;
+      eventTitleEl.textContent = space.label;
+
+      if (space.type === "goal") {
+        finishGame();
+        return;
+      }
+
+      if (space.type === "payday") {
+        applyPayday(space);
+        enableSpin();
+        return;
+      }
+
+      if (space.choice) {
+        showChoice(space);
+        return;
+      }
+
+      if (space.random) {
+        applyMarket();
+        enableSpin();
+        return;
+      }
+
+      applyEffect(space);
+      eventTextEl.textContent = space.text;
+      addLog(`${space.label}: ${space.text}`);
+      updateHud();
+      updateTimeline();
+      enableSpin();
+    }
+
+    function applyPayday(space) {
+      let amount = state.salary + state.skill * 25000;
+      if (space.promote) {
+        state.salary += 90000;
+        state.skill += 1;
+        amount += 120000;
+        state.happy += 5;
+      }
+      amount += space.money || 0;
+      applyMoney(amount);
+      state.happy = clamp(state.happy + (space.happy || 0), 0, 100);
+      const text = space.promote
+        ? `昇進。年収が上がり、給料${yen(amount)}を受け取った。`
+        : space.text || `給料${yen(amount)}を受け取った。`;
+      eventTextEl.textContent = text;
+      addLog(`${space.label}: ${text}`);
+      updateHud();
+      updateTimeline();
+    }
+
+    function applyMoney(amount) {
+      if (amount >= 0) {
+        state.money += amount;
+        return;
+      }
+      const cost = Math.abs(amount);
+      if (state.money >= cost) {
+        state.money -= cost;
+      } else {
+        state.debt += cost - state.money;
+        state.money = 0;
+      }
+    }
+
+    function applyEffect(effect) {
+      let money = effect.money || 0;
+      if (money < 0 && state.insurance && ["事故", "病気", "大出費"].includes(effect.label)) {
+        money = Math.ceil(money / 2);
+      }
+      applyMoney(money);
+      state.debt = Math.max(0, state.debt + (effect.debt || 0));
+      state.happy = clamp(state.happy + (effect.happy || 0), 0, 100);
+      state.family = Math.max(0, state.family + (effect.family || 0));
+      state.skill = Math.max(0, state.skill + (effect.skill || 0));
+      state.salary = Math.max(0, state.salary + (effect.salary || 0));
+      if (effect.insurance) state.insurance = true;
+    }
+
+    function showChoice(space) {
+      const options = choices[space.choice];
+      eventTextEl.textContent = "どちらを選びますか？";
+      choiceRowEl.innerHTML = "";
+      options.forEach((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = option.text;
+        button.addEventListener("click", () => chooseOption(space, option));
+        choiceRowEl.append(button);
+      });
+    }
+
+    function chooseOption(space, option) {
+      choiceRowEl.innerHTML = "";
+      let extra = "";
+      if (option.gamble) {
+        const won = Math.random() < .48 + state.skill * .03;
+        option = { ...option, money: won ? option.gamble[0] : option.gamble[1] };
+        extra = won ? "勝負は成功。" : "勝負は失敗。";
+      }
+      if (option.startup) {
+        const won = Math.random() < .38 + state.skill * .05;
+        option = won
+          ? { ...option, money: 900000, salary: 180000, happy: 6 }
+          : { ...option, debt: 500000, happy: -8 };
+        extra = won ? "事業は軌道に乗った。" : "事業は苦戦した。";
+      }
+      applyEffect(option);
+      const text = `${option.text}${extra ? ` ${extra}` : ""}`;
+      eventTextEl.textContent = text;
+      addLog(`${space.label}: ${text}`);
+      updateHud();
+      updateTimeline();
+      enableSpin();
+    }
+
+    function applyMarket() {
+      const amount = Math.random() < .5 ? 260000 : -240000;
+      applyMoney(amount);
+      state.happy = clamp(state.happy + (amount > 0 ? 4 : -5), 0, 100);
+      const text = amount > 0
+        ? `市場が好調。資産が${yen(amount)}増えた。`
+        : `市場が下落。${yen(Math.abs(amount))}の損失。`;
+      eventTextEl.textContent = text;
+      addLog(`市場変動: ${text}`);
+      updateHud();
+      updateTimeline();
+    }
+
+    function enableSpin() {
+      if (!state.finished) {
+        spinButton.disabled = false;
+        statusText.textContent = "次のルーレットを回してください。";
+      }
+    }
+
+    function finishGame() {
+      state.finished = true;
+      spinButton.disabled = true;
+      const score = state.money - state.debt + state.happy * 20000 + state.family * 150000 + state.skill * 80000;
+      const title = score >= 2500000 ? "豊かな人生" : score >= 1000000 ? "安定した人生" : "波乱の人生";
+      eventTitleEl.textContent = `Goal: ${title}`;
+      eventTextEl.textContent = `最終スコアは${yen(score)}。現金${yen(state.money)}、借金${yen(state.debt)}、幸せ${state.happy}、家族${state.family}人、スキル${state.skill}で計算しました。`;
+      statusText.textContent = "New Lifeで別の人生を始められます。";
+      addLog(`ゴール: 最終スコア ${yen(score)}`);
+      updateTimeline();
+    }
+
+    spinButton.addEventListener("click", spin);
+    newButton.addEventListener("click", resetGame);
+    workButton.addEventListener("click", () => startPath("work"));
+    collegeButton.addEventListener("click", () => startPath("college"));
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Space") {
+        event.preventDefault();
+        spin();
+      }
+    });
+
+    renderBoard();
+    resetGame();
+  </script>
+</body>
+</html>
