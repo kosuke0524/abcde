@@ -138,6 +138,26 @@
       box-shadow: var(--shadow);
     }
 
+    .board-wrap.fx-payday {
+      animation: glowPayday .82s ease;
+    }
+
+    .board-wrap.fx-risk {
+      animation: shakeRisk .46s ease;
+    }
+
+    .board-wrap.fx-family {
+      animation: glowFamily .82s ease;
+    }
+
+    .board-wrap.fx-choice {
+      animation: glowChoice .72s ease;
+    }
+
+    .board-wrap.fx-goal {
+      animation: glowGoal 1.2s ease;
+    }
+
     .board {
       position: relative;
       width: 100%;
@@ -230,6 +250,137 @@
       top: 5px;
       border-radius: 50%;
       background: rgba(246, 242, 233, .86);
+    }
+
+    .effect-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 8;
+    }
+
+    .burst {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      min-width: 96px;
+      border: 1px solid rgba(246, 242, 233, .5);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #111417;
+      background: var(--sun);
+      font-size: .92rem;
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, .34);
+      transform: translate(-50%, -50%) scale(.86);
+      animation: burstPop 1.05s ease forwards;
+    }
+
+    .burst.payday {
+      background: var(--cash);
+    }
+
+    .burst.risk {
+      background: var(--rose);
+    }
+
+    .burst.family {
+      background: #ff9dbc;
+    }
+
+    .burst.choice {
+      background: var(--sea);
+    }
+
+    .burst.goal {
+      background: var(--sun);
+      min-width: 150px;
+    }
+
+    .spark {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--sun);
+      left: 50%;
+      top: 50%;
+      animation: sparkOut .86s ease forwards;
+    }
+
+    .spark.payday {
+      background: var(--cash);
+    }
+
+    .spark.risk {
+      background: var(--rose);
+    }
+
+    .spark.family {
+      background: #ff9dbc;
+    }
+
+    .spark.choice {
+      background: var(--sea);
+    }
+
+    @keyframes glowPayday {
+      0%, 100% { box-shadow: var(--shadow); }
+      45% { box-shadow: 0 0 0 5px rgba(111, 227, 162, .28), 0 18px 48px rgba(111, 227, 162, .22); }
+    }
+
+    @keyframes glowFamily {
+      0%, 100% { box-shadow: var(--shadow); }
+      45% { box-shadow: 0 0 0 5px rgba(255, 157, 188, .25), 0 18px 48px rgba(255, 157, 188, .18); }
+    }
+
+    @keyframes glowChoice {
+      0%, 100% { box-shadow: var(--shadow); }
+      45% { box-shadow: 0 0 0 5px rgba(114, 183, 255, .25), 0 18px 48px rgba(114, 183, 255, .18); }
+    }
+
+    @keyframes glowGoal {
+      0%, 100% { box-shadow: var(--shadow); }
+      35%, 70% { box-shadow: 0 0 0 7px rgba(244, 191, 84, .34), 0 20px 58px rgba(244, 191, 84, .3); }
+    }
+
+    @keyframes shakeRisk {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-7px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(3px); }
+    }
+
+    @keyframes burstPop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -45%) scale(.78);
+      }
+      18% {
+        opacity: 1;
+        transform: translate(-50%, -58%) scale(1.05);
+      }
+      76% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -92%) scale(.96);
+      }
+    }
+
+    @keyframes sparkOut {
+      0% {
+        opacity: .95;
+        transform: translate(-50%, -50%) scale(.8);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2);
+      }
     }
 
     .event-box {
@@ -442,6 +593,7 @@
       </div>
 
       <div class="board-wrap">
+        <div class="effect-layer" id="effectLayer" aria-hidden="true"></div>
         <div class="board" id="board">
           <div class="road" aria-hidden="true"></div>
           <div class="token" id="token" aria-label="現在地"></div>
@@ -561,12 +713,34 @@
       work: [
         { name: "販売マネージャー", salary: 360000, skill: 1 },
         { name: "整備士", salary: 390000, skill: 2 },
-        { name: "クリエイター", salary: 340000, skill: 2 }
+        { name: "クリエイター", salary: 340000, skill: 2 },
+        { name: "料理人", salary: 350000, skill: 2 },
+        { name: "美容師", salary: 330000, skill: 2 },
+        { name: "配送ドライバー", salary: 370000, skill: 1 },
+        { name: "営業職", salary: 410000, skill: 1 },
+        { name: "農業経営者", salary: 320000, skill: 2 },
+        { name: "動画配信者", salary: 300000, skill: 3 },
+        { name: "カフェオーナー", salary: 340000, skill: 2 },
+        { name: "消防士", salary: 420000, skill: 2 },
+        { name: "警察官", salary: 430000, skill: 2 },
+        { name: "鉄道スタッフ", salary: 400000, skill: 2 },
+        { name: "スポーツトレーナー", salary: 360000, skill: 2 }
       ],
       college: [
         { name: "エンジニア", salary: 520000, skill: 3 },
         { name: "研究職", salary: 500000, skill: 4 },
-        { name: "医療専門職", salary: 560000, skill: 3 }
+        { name: "医療専門職", salary: 560000, skill: 3 },
+        { name: "弁護士", salary: 650000, skill: 4 },
+        { name: "公認会計士", salary: 610000, skill: 4 },
+        { name: "建築士", salary: 540000, skill: 3 },
+        { name: "高校教師", salary: 470000, skill: 3 },
+        { name: "データアナリスト", salary: 570000, skill: 4 },
+        { name: "薬剤師", salary: 530000, skill: 3 },
+        { name: "ゲームデザイナー", salary: 510000, skill: 3 },
+        { name: "プロダクトマネージャー", salary: 620000, skill: 4 },
+        { name: "金融アドバイザー", salary: 590000, skill: 3 },
+        { name: "都市計画プランナー", salary: 500000, skill: 3 },
+        { name: "AI研究者", salary: 680000, skill: 5 }
       ]
     };
 
@@ -746,6 +920,8 @@
     const eventTitleEl = document.querySelector("#eventTitle");
     const eventTextEl = document.querySelector("#eventText");
     const choiceRowEl = document.querySelector("#choiceRow");
+    const boardWrapEl = document.querySelector(".board-wrap");
+    const effectLayerEl = document.querySelector("#effectLayer");
     const spinButton = document.querySelector("#spinButton");
     const newButton = document.querySelector("#newButton");
     const workButton = document.querySelector("#workButton");
@@ -765,6 +941,56 @@
 
     function pick(items) {
       return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function effectKindFor(space, outcome = null) {
+      if (space.type === "goal") return "goal";
+      if (space.type === "payday") return "payday";
+      if (space.type === "family") return "family";
+      if (space.type === "risk") return "risk";
+      if (space.choice) {
+        if (outcome && ((outcome.money || 0) > 0 || (outcome.salary || 0) > 0)) return "payday";
+        if (outcome && ((outcome.money || 0) < 0 || (outcome.debt || 0) > 0)) return "risk";
+        if (outcome && ((outcome.family || 0) > 0 || (outcome.happy || 0) > 6)) return "family";
+        return "choice";
+      }
+      return "choice";
+    }
+
+    function effectLabel(kind, amount = "") {
+      const labels = {
+        payday: amount || "収入",
+        risk: amount || "出費",
+        family: "幸せ",
+        choice: "選択",
+        goal: "Goal"
+      };
+      return labels[kind] || "Event";
+    }
+
+    function triggerEffect(kind, label) {
+      boardWrapEl.classList.remove("fx-payday", "fx-risk", "fx-family", "fx-choice", "fx-goal");
+      void boardWrapEl.offsetWidth;
+      boardWrapEl.classList.add(`fx-${kind}`);
+      window.setTimeout(() => boardWrapEl.classList.remove(`fx-${kind}`), 1250);
+
+      const burst = document.createElement("div");
+      burst.className = `burst ${kind}`;
+      burst.textContent = label;
+      effectLayerEl.append(burst);
+      window.setTimeout(() => burst.remove(), 1100);
+
+      const sparkCount = kind === "goal" ? 24 : 14;
+      for (let i = 0; i < sparkCount; i += 1) {
+        const spark = document.createElement("span");
+        const angle = (Math.PI * 2 * i) / sparkCount;
+        const distance = kind === "goal" ? 210 : 145;
+        spark.className = `spark ${kind}`;
+        spark.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+        spark.style.setProperty("--dy", `${Math.sin(angle) * distance}px`);
+        effectLayerEl.append(spark);
+        window.setTimeout(() => spark.remove(), 920);
+      }
     }
 
     function renderBoard() {
@@ -839,6 +1065,7 @@
       eventTitleEl.textContent = "人生スタート";
       eventTextEl.textContent = `${state.career}として出発。ルーレットを回してください。`;
       statusText.textContent = "Spinで進みます。Spaceキーでも回せます。";
+      triggerEffect("choice", "Start");
       updateHud();
       updateTimeline();
     }
@@ -911,6 +1138,7 @@
       const space = spaces[state.position];
       state.spinning = false;
       eventTitleEl.textContent = space.label;
+      const baseKind = effectKindFor(space);
 
       if (space.type === "goal") {
         finishGame();
@@ -919,17 +1147,20 @@
 
       if (space.type === "payday") {
         applyPayday(space);
+        triggerEffect("payday", "収入");
         enableSpin();
         return;
       }
 
       if (space.choice) {
+        triggerEffect("choice", "選択");
         showChoice(space);
         return;
       }
 
       if (space.random) {
-        applyMarket();
+        const amount = applyMarket();
+        triggerEffect(amount >= 0 ? "payday" : "risk", amount >= 0 ? `+${yen(amount)}` : `-${yen(Math.abs(amount))}`);
         enableSpin();
         return;
       }
@@ -937,6 +1168,7 @@
       applyEffect(space);
       eventTextEl.textContent = space.text;
       addLog(`${space.label}: ${space.text}`);
+      triggerEffect(baseKind, effectLabel(baseKind, space.money ? (space.money > 0 ? `+${yen(space.money)}` : `-${yen(Math.abs(space.money))}`) : ""));
       updateHud();
       updateTimeline();
       enableSpin();
@@ -1022,6 +1254,11 @@
       const text = `${option.text}${extra ? ` ${extra}` : ""}`;
       eventTextEl.textContent = text;
       addLog(`${space.label}: ${text}`);
+      const kind = effectKindFor(space, option);
+      const label = option.money
+        ? (option.money > 0 ? `+${yen(option.money)}` : `-${yen(Math.abs(option.money))}`)
+        : effectLabel(kind);
+      triggerEffect(kind, label);
       updateHud();
       updateTimeline();
       enableSpin();
@@ -1038,6 +1275,7 @@
       addLog(`市場変動: ${text}`);
       updateHud();
       updateTimeline();
+      return amount;
     }
 
     function enableSpin() {
@@ -1056,6 +1294,7 @@
       eventTextEl.textContent = `最終スコアは${yen(score)}。現金${yen(state.money)}、借金${yen(state.debt)}、幸せ${state.happy}、家族${state.family}人、スキル${state.skill}で計算しました。`;
       statusText.textContent = "New Lifeで別の人生を始められます。";
       addLog(`ゴール: 最終スコア ${yen(score)}`);
+      triggerEffect("goal", "Goal");
       updateTimeline();
     }
 
