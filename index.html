@@ -129,7 +129,7 @@
     .board-wrap {
       position: relative;
       overflow: hidden;
-      min-height: 650px;
+      min-height: 710px;
       padding: 22px;
       background:
         linear-gradient(180deg, rgba(255, 255, 255, .04), transparent 42%),
@@ -162,7 +162,7 @@
       position: relative;
       width: 100%;
       height: 100%;
-      min-height: 606px;
+      min-height: 666px;
     }
 
     .road {
@@ -554,22 +554,22 @@
       }
 
       .board-wrap {
-        min-height: 620px;
+        min-height: 700px;
         padding: 10px;
       }
 
       .board {
-        min-height: 590px;
+        min-height: 670px;
       }
 
       .space {
-        width: 58px;
-        min-height: 54px;
+        width: 50px;
+        min-height: 50px;
         padding: 5px;
       }
 
       .space strong {
-        font-size: .68rem;
+        font-size: .62rem;
       }
 
       .spinner {
@@ -706,7 +706,27 @@
       { label: "年金準備", type: "choice", x: 50, y: 52, choice: "pension" },
       { label: "退職準備", type: "choice", x: 60, y: 52, choice: "retire" },
       { label: "最後の旅", type: "choice", x: 50, y: 62, choice: "lastTrip" },
-      { label: "Goal", type: "goal", x: 40, y: 62, text: "ゴール。総合資産を計算します。" }
+      { label: "メンター", type: "choice", x: 40, y: 62, choice: "mentor" },
+      { label: "ボランティア", type: "choice", x: 30, y: 62, choice: "volunteer" },
+      { label: "技術更新", type: "choice", x: 22, y: 58, choice: "techUpgrade" },
+      { label: "詐欺被害", type: "risk", x: 18, y: 50, money: -260000, happy: -8, text: "怪しい話に巻き込まれた。情報確認の大切さを学ぶ。" },
+      { label: "祭り", type: "choice", x: 24, y: 46, choice: "festival" },
+      { label: "出版", type: "choice", x: 34, y: 46, choice: "book" },
+      { label: "別荘", type: "choice", x: 44, y: 46, choice: "secondHome" },
+      { label: "孫", type: "family", x: 54, y: 46, family: 1, money: -100000, happy: 15, text: "新しい世代が生まれ、家族の時間が増えた。" },
+      { label: "給料日", type: "payday", x: 64, y: 46 },
+      { label: "災害", type: "risk", x: 72, y: 52, money: -300000, happy: -7, text: "災害対応で大きな支出。備えが役に立つ場面もある。" },
+      { label: "修繕", type: "choice", x: 72, y: 62, choice: "repair" },
+      { label: "芸術", type: "choice", x: 64, y: 72, choice: "art" },
+      { label: "医療選択", type: "choice", x: 54, y: 78, choice: "medicalChoice" },
+      { label: "遺すもの", type: "choice", x: 44, y: 78, choice: "legacyChoice" },
+      { label: "贈り物", type: "choice", x: 34, y: 78, choice: "gift" },
+      { label: "最後の投資", type: "choice", x: 24, y: 78, choice: "finalInvest" },
+      { label: "同窓会", type: "family", x: 16, y: 70, money: -70000, happy: 9, text: "昔の仲間と再会。忘れていた夢を思い出した。" },
+      { label: "給料日", type: "payday", x: 16, y: 60 },
+      { label: "終の住処", type: "choice", x: 26, y: 56, choice: "finalMove" },
+      { label: "お別れ会", type: "choice", x: 36, y: 56, choice: "farewell" },
+      { label: "Goal", type: "goal", x: 46, y: 56, text: "ゴール。総合資産を計算します。" }
     ];
 
     const careers = {
@@ -884,6 +904,76 @@
         { text: "豪華な旅: -¥350,000 / 幸せ+18", money: -350000, happy: 18 },
         { text: "家族で温泉: -¥160,000 / 幸せ+10 / 家族+1", money: -160000, happy: 10, family: 1 },
         { text: "家でゆっくり: 幸せ+5", happy: 5 }
+      ],
+      mentor: [
+        { text: "若手を育てる: 幸せ+9 / スキル+1", happy: 9, skill: 1 },
+        { text: "講演を受ける: +¥180,000 / 幸せ+3", money: 180000, happy: 3 },
+        { text: "静かに支える: 家族+1 / 幸せ+5", family: 1, happy: 5 }
+      ],
+      volunteer: [
+        { text: "毎週参加する: 幸せ+12 / 年収-¥30,000", happy: 12, salary: -30000 },
+        { text: "寄付で支える: -¥120,000 / 幸せ+8", money: -120000, happy: 8 },
+        { text: "得意分野で手伝う: スキル+1 / 幸せ+7", skill: 1, happy: 7 }
+      ],
+      techUpgrade: [
+        { text: "最新端末に更新: -¥180,000 / スキル+2", money: -180000, skill: 2 },
+        { text: "オンライン講座を受ける: -¥70,000 / スキル+1 / 幸せ+2", money: -70000, skill: 1, happy: 2 },
+        { text: "紙と電話で続ける: 現金を守る / 幸せ-2", happy: -2 }
+      ],
+      festival: [
+        { text: "屋台を出す: 成功なら+¥260,000、失敗なら-¥90,000", gamble: [260000, -90000] },
+        { text: "実行委員になる: 幸せ+9 / スキル+1", happy: 9, skill: 1 },
+        { text: "家族で楽しむ: -¥50,000 / 幸せ+8", money: -50000, happy: 8 }
+      ],
+      book: [
+        { text: "自伝を書く: 成功なら+¥420,000、失敗なら-¥120,000", gamble: [420000, -120000] },
+        { text: "ブログで発信: スキル+1 / 幸せ+4", skill: 1, happy: 4 },
+        { text: "日記に残す: 幸せ+5", happy: 5 }
+      ],
+      secondHome: [
+        { text: "別荘を買う: 借金+¥900,000 / 幸せ+14", debt: 900000, happy: 14 },
+        { text: "貸別荘で十分: -¥120,000 / 幸せ+7", money: -120000, happy: 7 },
+        { text: "持たない: +¥100,000 / 幸せ-1", money: 100000, happy: -1 }
+      ],
+      repair: [
+        { text: "しっかり修繕: -¥260,000 / 幸せ+6", money: -260000, happy: 6 },
+        { text: "最低限で済ませる: -¥90,000 / 幸せ-2", money: -90000, happy: -2 },
+        { text: "DIYに挑戦: -¥50,000 / スキル+2", money: -50000, skill: 2 }
+      ],
+      art: [
+        { text: "個展を開く: 成功なら+¥500,000、失敗なら-¥180,000", gamble: [500000, -180000] },
+        { text: "作品を買う: -¥160,000 / 幸せ+10", money: -160000, happy: 10 },
+        { text: "地域の展示を手伝う: 幸せ+6 / スキル+1", happy: 6, skill: 1 }
+      ],
+      medicalChoice: [
+        { text: "高度医療を選ぶ: -¥350,000 / 幸せ+9", money: -350000, happy: 9 },
+        { text: "予防に投資: -¥120,000 / 幸せ+7 / スキル+1", money: -120000, happy: 7, skill: 1 },
+        { text: "生活改善で向き合う: 幸せ+4", happy: 4 }
+      ],
+      legacyChoice: [
+        { text: "奨学金基金を作る: -¥300,000 / 家族+1 / 幸せ+12", money: -300000, family: 1, happy: 12 },
+        { text: "知識を講座にする: +¥220,000 / スキル+1", money: 220000, skill: 1 },
+        { text: "家族に手紙を書く: 家族+1 / 幸せ+8", family: 1, happy: 8 }
+      ],
+      gift: [
+        { text: "大きく贈る: -¥250,000 / 家族+1 / 幸せ+10", money: -250000, family: 1, happy: 10 },
+        { text: "小さく何度も贈る: -¥80,000 / 幸せ+7", money: -80000, happy: 7 },
+        { text: "時間を贈る: 幸せ+9", happy: 9 }
+      ],
+      finalInvest: [
+        { text: "堅実に運用: +¥220,000", money: 220000 },
+        { text: "最後に勝負: 成功なら+¥800,000、失敗なら-¥360,000", gamble: [800000, -360000] },
+        { text: "現金で守る: 幸せ+2", happy: 2 }
+      ],
+      finalMove: [
+        { text: "便利な街へ: -¥240,000 / 幸せ+10", money: -240000, happy: 10 },
+        { text: "自然の近くへ: 年収-¥40,000 / 幸せ+12", salary: -40000, happy: 12 },
+        { text: "今の家を整える: -¥120,000 / 幸せ+6", money: -120000, happy: 6 }
+      ],
+      farewell: [
+        { text: "盛大に開く: -¥200,000 / 家族+1 / 幸せ+14", money: -200000, family: 1, happy: 14 },
+        { text: "親しい人だけ: -¥70,000 / 幸せ+8", money: -70000, happy: 8 },
+        { text: "静かに感謝を伝える: 幸せ+6", happy: 6 }
       ]
     };
 
