@@ -660,17 +660,26 @@
       { label: "Start", type: "choice", x: 8, y: 86, text: "人生のスタート。最初の選択が効いてきます。" },
       { label: "初任給", type: "payday", x: 18, y: 86 },
       { label: "引越し", type: "risk", x: 28, y: 86, money: -120000, happy: 4, text: "広い部屋に引越し。出費は痛いが気分は上がる。" },
-      { label: "資格", type: "choice", x: 38, y: 86, choice: "study" },
+      { label: "資格", type: "choice", x: 38, y: 86, choice: "study", branches: [
+        { text: "早道ルート: 2マス進む / 幸せ-1", moveBy: 2, happy: -1 },
+        { text: "基礎固めルート: その場に残る / スキル+1", skill: 1 }
+      ] },
       { label: "友人", type: "family", x: 48, y: 86, happy: 7, text: "古い友人と再会。元気をもらった。" },
       { label: "買い物", type: "choice", x: 58, y: 86, choice: "shopping" },
       { label: "給料日", type: "payday", x: 68, y: 86 },
       { label: "副業", type: "choice", x: 78, y: 86, choice: "sideJob" },
       { label: "事故", type: "risk", x: 88, y: 82, money: -180000, happy: -5, text: "急な修理費。保険があれば半額で済む。" },
-      { label: "転職", type: "choice", x: 90, y: 72, choice: "career" },
+      { label: "転職", type: "choice", x: 90, y: 72, choice: "career", branches: [
+        { text: "安定ルート: 1マス進む / 幸せ+2", moveBy: 1, happy: 2 },
+        { text: "挑戦ルート: 3マス進む / 年収+¥60,000", moveBy: 3, salary: 60000 }
+      ] },
       { label: "恋愛", type: "choice", x: 90, y: 62, choice: "relationship" },
       { label: "結婚", type: "family", x: 90, y: 52, family: 1, money: -260000, happy: 12, text: "大切なパートナーと新生活。" },
       { label: "給料日", type: "payday", x: 90, y: 42 },
-      { label: "投資", type: "choice", x: 90, y: 32, choice: "invest" },
+      { label: "投資", type: "choice", x: 90, y: 32, choice: "invest", branches: [
+        { text: "堅実ルート: 1マス進む / +¥80,000", moveBy: 1, money: 80000 },
+        { text: "攻めルート: 4マス進む / 借金+¥120,000", moveBy: 4, debt: 120000 }
+      ] },
       { label: "出産", type: "family", x: 90, y: 22, family: 1, money: -220000, happy: 13, text: "家族が増えた。生活費も増えた。" },
       { label: "教育", type: "choice", x: 82, y: 12, choice: "childEdu" },
       { label: "税金", type: "risk", x: 72, y: 12, money: -160000, happy: -2, text: "税金と手続きでまとまった支出。" },
@@ -679,11 +688,17 @@
       { label: "健康診断", type: "choice", x: 42, y: 12, choice: "health" },
       { label: "病気", type: "risk", x: 32, y: 12, money: -220000, happy: -8, text: "体調を崩した。保険があれば負担は半額。" },
       { label: "車", type: "choice", x: 22, y: 12, choice: "car" },
-      { label: "家購入", type: "choice", x: 12, y: 18, choice: "home" },
+      { label: "家購入", type: "choice", x: 12, y: 18, choice: "home", branches: [
+        { text: "定住ルート: その場に残る / 幸せ+5", happy: 5 },
+        { text: "住み替えルート: 2マス進む / -¥80,000", moveBy: 2, money: -80000 }
+      ] },
       { label: "給料日", type: "payday", x: 8, y: 28 },
       { label: "地域活動", type: "choice", x: 8, y: 38, choice: "community" },
       { label: "学び直し", type: "choice", x: 8, y: 48, choice: "reskill" },
-      { label: "起業", type: "choice", x: 8, y: 58, choice: "startup" },
+      { label: "起業", type: "choice", x: 8, y: 58, choice: "startup", branches: [
+        { text: "地道ルート: 1マス進む / スキル+1", moveBy: 1, skill: 1 },
+        { text: "急成長ルート: 4マス進む / 借金+¥200,000", moveBy: 4, debt: 200000 }
+      ] },
       { label: "ペット", type: "choice", x: 8, y: 68, choice: "pet" },
       { label: "家族旅行", type: "family", x: 18, y: 72, money: -150000, happy: 11, text: "思い出が増えた。" },
       { label: "給料日", type: "payday", x: 28, y: 72 },
@@ -698,17 +713,29 @@
       { label: "給料日", type: "payday", x: 68, y: 32 },
       { label: "ローン整理", type: "choice", x: 58, y: 32, choice: "loan" },
       { label: "在宅勤務", type: "choice", x: 48, y: 32, choice: "remoteWork" },
-      { label: "移住", type: "choice", x: 38, y: 32, choice: "moveCity" },
+      { label: "移住", type: "choice", x: 38, y: 32, choice: "moveCity", branches: [
+        { text: "地域密着ルート: その場に残る / 幸せ+6", happy: 6 },
+        { text: "新天地ルート: 3マス進む / スキル+1", moveBy: 3, skill: 1 }
+      ] },
       { label: "金融相談", type: "choice", x: 28, y: 32, choice: "finance" },
       { label: "相続", type: "choice", x: 20, y: 42, choice: "inheritance" },
       { label: "給料日", type: "payday", x: 30, y: 52 },
-      { label: "夢", type: "choice", x: 40, y: 52, choice: "dream" },
+      { label: "夢", type: "choice", x: 40, y: 52, choice: "dream", branches: [
+        { text: "夢追いルート: 3マス進む / 幸せ+7 / -¥100,000", moveBy: 3, happy: 7, money: -100000 },
+        { text: "現実ルート: 1マス進む / +¥120,000", moveBy: 1, money: 120000 }
+      ] },
       { label: "年金準備", type: "choice", x: 50, y: 52, choice: "pension" },
-      { label: "退職準備", type: "choice", x: 60, y: 52, choice: "retire" },
+      { label: "退職準備", type: "choice", x: 60, y: 52, choice: "retire", branches: [
+        { text: "ゆっくりルート: その場に残る / 幸せ+8", happy: 8 },
+        { text: "早期退職ルート: 2マス進む / 年収-¥80,000", moveBy: 2, salary: -80000 }
+      ] },
       { label: "最後の旅", type: "choice", x: 50, y: 62, choice: "lastTrip" },
       { label: "メンター", type: "choice", x: 40, y: 62, choice: "mentor" },
       { label: "ボランティア", type: "choice", x: 30, y: 62, choice: "volunteer" },
-      { label: "技術更新", type: "choice", x: 22, y: 58, choice: "techUpgrade" },
+      { label: "技術更新", type: "choice", x: 22, y: 58, choice: "techUpgrade", branches: [
+        { text: "デジタルルート: 2マス進む / スキル+1", moveBy: 2, skill: 1 },
+        { text: "アナログルート: その場に残る / 幸せ+4", happy: 4 }
+      ] },
       { label: "詐欺被害", type: "risk", x: 18, y: 50, money: -260000, happy: -8, text: "怪しい話に巻き込まれた。情報確認の大切さを学ぶ。" },
       { label: "祭り", type: "choice", x: 24, y: 46, choice: "festival" },
       { label: "出版", type: "choice", x: 34, y: 46, choice: "book" },
@@ -721,7 +748,10 @@
       { label: "医療選択", type: "choice", x: 54, y: 78, choice: "medicalChoice" },
       { label: "遺すもの", type: "choice", x: 44, y: 78, choice: "legacyChoice" },
       { label: "贈り物", type: "choice", x: 34, y: 78, choice: "gift" },
-      { label: "最後の投資", type: "choice", x: 24, y: 78, choice: "finalInvest" },
+      { label: "最後の投資", type: "choice", x: 24, y: 78, choice: "finalInvest", branches: [
+        { text: "守りのルート: 1マス進む / +¥80,000", moveBy: 1, money: 80000 },
+        { text: "勝負のルート: 3マス進む / 幸せ-3", moveBy: 3, happy: -3 }
+      ] },
       { label: "同窓会", type: "family", x: 16, y: 70, money: -70000, happy: 9, text: "昔の仲間と再会。忘れていた夢を思い出した。" },
       { label: "給料日", type: "payday", x: 16, y: 60 },
       { label: "終の住処", type: "choice", x: 26, y: 56, choice: "finalMove" },
@@ -1314,7 +1344,7 @@
 
     function showChoice(space) {
       const options = choices[space.choice];
-      eventTextEl.textContent = "どちらを選びますか？";
+      eventTextEl.textContent = space.branches ? "イベントを選んだあと、進むルートも選びます。" : "どちらを選びますか？";
       choiceRowEl.innerHTML = "";
       options.forEach((option) => {
         const button = document.createElement("button");
@@ -1351,7 +1381,48 @@
       triggerEffect(kind, label);
       updateHud();
       updateTimeline();
-      enableSpin();
+      if (space.branches) {
+        showBranches(space);
+      } else {
+        enableSpin();
+      }
+    }
+
+    function showBranches(space) {
+      eventTitleEl.textContent = "進路を選択";
+      eventTextEl.textContent = "次に進むルートを選んでください。選んだルートで現在地や状態が変わります。";
+      choiceRowEl.innerHTML = "";
+      spinButton.disabled = true;
+      space.branches.forEach((branch) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = branch.text;
+        button.addEventListener("click", () => chooseBranch(space, branch));
+        choiceRowEl.append(button);
+      });
+    }
+
+    function chooseBranch(space, branch) {
+      choiceRowEl.innerHTML = "";
+      applyEffect(branch);
+      if (branch.moveBy) {
+        state.position = clamp(state.position + branch.moveBy, 0, spaces.length - 1);
+        state.age += Math.max(0, branch.moveBy);
+        moveToken();
+      }
+      const current = spaces[state.position];
+      const moveText = branch.moveBy ? ` 現在地は「${current.label}」。` : "";
+      eventTitleEl.textContent = "ルート決定";
+      eventTextEl.textContent = `${branch.text}${moveText}`;
+      addLog(`${space.label}の分岐: ${branch.text}`);
+      triggerEffect(effectKindFor(space, branch), branch.moveBy ? `${branch.moveBy}マス` : "分岐");
+      updateHud();
+      updateTimeline();
+      if (current.type === "goal") {
+        window.setTimeout(finishGame, 700);
+      } else {
+        enableSpin();
+      }
     }
 
     function applyMarket() {
